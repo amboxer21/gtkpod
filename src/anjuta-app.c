@@ -252,7 +252,7 @@ static void on_gdl_style_changed(GSettings* settings, const gchar* key, gpointer
     else if (g_strcmp0(pr_style, "Tabs") == 0)
         style = GDL_SWITCHER_STYLE_TABS;
 
-    g_object_set(G_OBJECT(app->layout_manager->master), "switcher-style", style, NULL);
+    g_object_set(G_OBJECT(gdl_dock_layout_get_master (app->layout_manager)), "switcher-style", style, NULL);
     g_free(pr_style);
 }
 
@@ -478,14 +478,14 @@ static void anjuta_app_instance_init(AnjutaApp *app) {
     gtk_widget_show(app->dock);
     gtk_box_pack_end(GTK_BOX (hbox), app->dock, TRUE, TRUE, 0);
 
-    dockbar = gdl_dock_bar_new(GDL_DOCK(app->dock));
+    dockbar = gdl_dock_bar_new(G_OBJECT(app->dock));
     gtk_widget_show(dockbar);
     gtk_box_pack_start(GTK_BOX (hbox), dockbar, FALSE, FALSE, 0);
 
-    app->layout_manager = gdl_dock_layout_new(GDL_DOCK (app->dock));
+    app->layout_manager = gdl_dock_layout_new(G_OBJECT (app->dock));
     g_signal_connect (app->layout_manager, "notify::dirty",
             G_CALLBACK (on_layout_dirty_notify), app);
-    g_signal_connect (app->layout_manager->master, "notify::locked",
+    g_signal_connect (gdl_dock_layout_get_master (app->layout_manager), "notify::locked",
             G_CALLBACK (on_layout_locked_notify), app);
 
     /* UI engine */
